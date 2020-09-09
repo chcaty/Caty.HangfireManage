@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Caty.ContextMaster.Common;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace Caty.ContextMaster
 {
@@ -44,11 +38,14 @@ namespace Caty.ContextMaster
             app.UseRouting();
 
             app.UseAuthorization();
+
             #region Hangfire
+
             app.UseHangfireServer(HangFireConfigurationModule.JobOptions(Configuration));
             app.UseHangfireDashboard("/TaskManager", HangFireConfigurationModule.HfDispose(Configuration));
             HangFireConfigurationModule.HangfireService();
-            #endregion
+
+            #endregion Hangfire
 
             app.UseEndpoints(endpoints =>
             {

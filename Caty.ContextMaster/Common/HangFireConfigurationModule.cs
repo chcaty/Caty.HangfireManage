@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 
-namespace Caty.ContextMaster
+namespace Caty.ContextMaster.Common
 {
     public static class HangFireConfigurationModule
     {
