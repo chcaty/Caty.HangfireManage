@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30503.244
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E8FD282D-E107-4A9B-9747-49C0781FF962}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{4628D4C2-F907-4AEE-A202-F31F5FAA58E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caty.ContextMaster", "Caty.ContextMaster\Caty.ContextMaster.csproj", "{5A89F9FF-1540-4EE1-B85D-46E4AF446EE7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5A89F9FF-1540-4EE1-B85D-46E4AF446EE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A89F9FF-1540-4EE1-B85D-46E4AF446EE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A89F9FF-1540-4EE1-B85D-46E4AF446EE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A89F9FF-1540-4EE1-B85D-46E4AF446EE7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4628D4C2-F907-4AEE-A202-F31F5FAA58E1} = {E8FD282D-E107-4A9B-9747-49C0781FF962}
+		{5A89F9FF-1540-4EE1-B85D-46E4AF446EE7} = {4628D4C2-F907-4AEE-A202-F31F5FAA58E1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C945F7E2-4C52-4C04-8B60-460052E657FB}
+	EndGlobalSection
+EndGlobal
