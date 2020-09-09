@@ -1,4 +1,6 @@
 using Caty.ContextMaster.Common;
+using Caty.ContextMaster.Common.Mail;
+using Caty.ContextMaster.Models;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +25,11 @@ namespace Caty.ContextMaster
             services.AddControllers();
             services.AddHangfire(x => x.UseSqlServerStorage("ConnectionStrings"));
             services.AddHangFireModule(Configuration);
+
+            #region MailKit
+            services.Configure<SmtpSettings>(Configuration.GetSection("MailKit"));
+            services.AddSingleton<IMailer, Mailer>();
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
