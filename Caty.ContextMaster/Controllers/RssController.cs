@@ -3,6 +3,7 @@ using Caty.ContextMaster.Common.Mail;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Caty.ContextMaster.Controllers
 {
@@ -17,14 +18,19 @@ namespace Caty.ContextMaster.Controllers
             _mailer = mailer;
         }
 
-        public IActionResult GetCnBlog()
+        [HttpGet]
+        public IActionResult GetCnBlogAsync()
         {
             var feed = RssCommon.ShowRss("http://feed.cnblogs.com/blog/sitecateogry/108698/rss");
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-            };
             return new JsonResult(feed);
+        }
+
+        [HttpGet("Export")]
+        public async Task<IActionResult> ExportRssReport()
+        {
+            var feed = RssCommon.ShowRss("http://feed.cnblogs.com/blog/sitecateogry/108698/rss");
+            await _mailer.SendMailAsync("1120873075@qq.com", "Rss Report", feed.Title);
+            return Ok();
         }
     }
 }

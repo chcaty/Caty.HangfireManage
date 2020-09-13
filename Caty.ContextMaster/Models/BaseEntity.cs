@@ -7,6 +7,9 @@ namespace Caty.ContextMaster.Models
 {
     public class BaseEntity
     {
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
+
+        public virtual DateTime CreateTime { get; set; }
+        public virtual DateTime UpdateTime { get; set; }
     }
 }

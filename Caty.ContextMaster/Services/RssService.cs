@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Caty.ContextMaster.Services
 {
-    public class RssService
+    public class RssService : IRssService
     {
         public RssFeed GetRssFeed(string rssUrl)
         {

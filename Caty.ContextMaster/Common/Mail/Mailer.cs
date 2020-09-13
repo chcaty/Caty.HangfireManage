@@ -50,7 +50,7 @@ namespace Caty.ContextMaster.Common.Mail
 
                     await client.AuthenticateAsync(_smtpSettings.Username, _smtpSettings.Password).ConfigureAwait(false);
                     await client.SendAsync(message).ConfigureAwait(false);
-                    await client.DisconnectAsync(true).ConfigureAwait(false);
+                    await client.DisconnectAsync(quit: true).ConfigureAwait(false);
                 }
 
             }
