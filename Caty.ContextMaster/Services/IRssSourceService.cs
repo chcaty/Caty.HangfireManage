@@ -7,5 +7,10 @@ namespace Caty.ContextMaster.Services
 {
     public interface IRssSourceService
     {
+        Task AddRssSource();
+
+        Task UpdateRssSource();
+
+        Task UpdateRssSourceIsEnaled();
     }
 }

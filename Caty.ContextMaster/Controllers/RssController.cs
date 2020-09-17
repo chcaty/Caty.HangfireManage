@@ -1,5 +1,7 @@
 ﻿using Caty.ContextMaster.Common;
 using Caty.ContextMaster.Common.Mail;
+using Caty.ContextMaster.Models;
+using Caty.ContextMaster.Repositorys;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
 using System.Text.Json;
