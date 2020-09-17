@@ -35,7 +35,7 @@ namespace Caty.ContextMaster.Models.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FeedId")
+                    b.Property<string>("FeedCode")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Generator")
@@ -61,9 +61,7 @@ namespace Caty.ContextMaster.Models.Migrations
             modelBuilder.Entity("Caty.ContextMaster.Models.RssItem", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("Author")
                         .HasColumnType("nvarchar(max)");
@@ -80,10 +78,7 @@ namespace Caty.ContextMaster.Models.Migrations
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("FeedId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("FeedId1")
+                    b.Property<int>("FeedId")
                         .HasColumnType("int");
 
                     b.Property<string>("ItemId")
@@ -102,8 +97,6 @@ namespace Caty.ContextMaster.Models.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FeedId1");
 
                     b.ToTable("RssItems");
                 });
@@ -142,7 +135,9 @@ namespace Caty.ContextMaster.Models.Migrations
                 {
                     b.HasOne("Caty.ContextMaster.Models.RssFeed", "Feed")
                         .WithMany("Items")
-                        .HasForeignKey("FeedId1");
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

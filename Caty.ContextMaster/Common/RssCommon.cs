@@ -14,7 +14,7 @@ namespace Caty.ContextMaster.Common
             var feed = new RssFeed
             {
                 Title = sf.Title.Text,
-                FeedId = sf.Id,
+                FeedCode = sf.Id,
             };
             if (sf.Links.Count > 0)
             {
@@ -38,7 +38,7 @@ namespace Caty.ContextMaster.Common
                     LastUpdatedTime = it.LastUpdatedTime.DateTime,
                     Summary = it.Summary.Text,
                     ContentLink = $"{it.Links[0].Uri}",
-                    FeedId = feed.FeedId,
+                    FeedId = feed.Id,
                     Feed = feed,
                 });
             }

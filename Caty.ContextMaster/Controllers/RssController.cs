@@ -21,15 +21,15 @@ namespace Caty.ContextMaster.Controllers
         [HttpGet]
         public IActionResult GetCnBlogAsync()
         {
-            var feed = RssCommon.ShowRss("http://feed.cnblogs.com/blog/sitecateogry/108698/rss");
+            var feed = RssCommon.GetRssFeed("http://feed.cnblogs.com/blog/sitecateogry/108698/rss");
             return new JsonResult(feed);
         }
 
         [HttpGet("Export")]
         public async Task<IActionResult> ExportRssReport()
         {
-            var feed = RssCommon.ShowRss("http://feed.cnblogs.com/blog/sitecateogry/108698/rss");
-            await _mailer.SendMailAsync("1120873075@qq.com", "Rss Report", feed.Title);
+            var feed = RssCommon.GetRssFeed("http://feed.cnblogs.com/blog/sitecateogry/108698/rss");
+            await _mailer.SendMailAsync("1120873075@qq.com", "Rss Report", JsonSerializer.Serialize(feed));
             return Ok();
         }
     }

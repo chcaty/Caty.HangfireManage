@@ -15,6 +15,12 @@ namespace Caty.ContextMaster.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<RssFeed>()
+                .HasMany(g => g.Items)
+                .WithOne(s => s.Feed)
+                .HasForeignKey(fk => fk.Id)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
         public RssDbContext AddAuditInfo()

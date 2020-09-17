@@ -21,7 +21,7 @@ namespace Caty.ContextMaster.Models.Migrations
                     Description = table.Column<string>(nullable: true),
                     LastUpdatedTime = table.Column<DateTime>(nullable: false),
                     Generator = table.Column<string>(nullable: true),
-                    FeedId = table.Column<string>(nullable: true)
+                    FeedCode = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -38,7 +38,8 @@ namespace Caty.ContextMaster.Models.Migrations
                     UpdateTime = table.Column<DateTime>(nullable: false),
                     RssName = table.Column<string>(nullable: true),
                     RssUrl = table.Column<string>(nullable: true),
-                    Category = table.Column<string>(nullable: true)
+                    Category = table.Column<string>(nullable: true),
+                    IsEnabled = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,8 +50,7 @@ namespace Caty.ContextMaster.Models.Migrations
                 name: "RssItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(nullable: false),
                     CreateTime = table.Column<DateTime>(nullable: false),
                     UpdateTime = table.Column<DateTime>(nullable: false),
                     Author = table.Column<string>(nullable: true),
@@ -61,24 +61,17 @@ namespace Caty.ContextMaster.Models.Migrations
                     LastUpdatedTime = table.Column<DateTime>(nullable: false),
                     ItemId = table.Column<string>(nullable: true),
                     ContentLink = table.Column<string>(nullable: true),
-                    FeedId = table.Column<string>(nullable: true),
-                    FeedId1 = table.Column<int>(nullable: true)
+                    FeedId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RssItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RssItems_RssFeeds_FeedId1",
-                        column: x => x.FeedId1,
+                        name: "FK_RssItems_RssFeeds_Id",
+                        column: x => x.Id,
                         principalTable: "RssFeeds",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RssItems_FeedId1",
-                table: "RssItems",
-                column: "FeedId1");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

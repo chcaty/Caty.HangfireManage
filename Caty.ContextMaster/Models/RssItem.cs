@@ -51,8 +51,7 @@ namespace Caty.ContextMaster.Models
         /// <summary>
         /// 聚合Id
         /// </summary>
-        [JsonIgnore]
-        public string FeedId { get; set; }
+        public int FeedId { get; set; }
 
         /// <summary>
         /// 所属聚合

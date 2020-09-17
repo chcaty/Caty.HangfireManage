@@ -39,9 +39,9 @@ namespace Caty.ContextMaster.Models
         public string Generator { get; set; }
 
         /// <summary>
-        /// 聚合Id
+        /// 聚合UUId
         /// </summary>
-        public string FeedId { get; set; }
+        public string FeedCode { get; set; }
 
         /// <summary>
         /// 消息列表
