@@ -69,7 +69,7 @@ namespace Caty.ContextMaster.Common
             #region 更新Rss
 
             // 每天的凌晨0:00分执行一次---支持异步方法
-            RecurringJob.AddOrUpdate<RssService>(s => s.GetRssFeed("http://feed.cnblogs.com/blog/sitecateogry/108698/rss"), "0 0 8,20 * * ?", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate<RssService>(s => s.GetRssFeedListAsync(), "0 0 8,20 * * ?", TimeZoneInfo.Local);
 
             #endregion 更新Rss
         }

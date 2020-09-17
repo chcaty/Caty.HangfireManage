@@ -1,15 +1,16 @@
 ﻿using Caty.ContextMaster.Models;
 using System.Collections.Generic;
 using System.ServiceModel.Syndication;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace Caty.ContextMaster.Common
 {
     public static class RssCommon
     {
-        public static RssFeed ShowRss(string rssURI)
+        public static RssFeed GetRssFeed(string rssUri)
         {
-            SyndicationFeed sf = SyndicationFeed.Load(XmlReader.Create(rssURI));
+            SyndicationFeed sf = SyndicationFeed.Load(XmlReader.Create(rssUri));
             var feed = new RssFeed
             {
                 Title = sf.Title.Text,
@@ -43,6 +44,16 @@ namespace Caty.ContextMaster.Common
             }
             feed.Items = ItemList;
             return feed;
+        }
+
+        public static IList<RssFeed> GetRssFeeds(List<string> rssUris)
+        {
+            var feedList = new List<RssFeed>();
+            foreach(var str in rssUris)
+            {
+                feedList.Add(GetRssFeed(str));
+            }
+            return feedList;
         }
     }
 }

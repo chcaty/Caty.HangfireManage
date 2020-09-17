@@ -24,5 +24,10 @@ namespace Caty.ContextMaster.Models
         /// Rss分类
         /// </summary>
         public string Category { get; set; }
+
+        /// <summary>
+        /// 是否启用
+        /// </summary>
+        public bool IsEnabled { get; set; }
     }
 }
