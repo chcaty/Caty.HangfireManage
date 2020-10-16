@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +11,6 @@ namespace Caty.ContextMaster.Services
 
         Task UpdateRssSource();
 
-        Task UpdateRssSourceIsEnaled();
+        Task UpdateRssSourceIsEnabled();
     }
 }
