@@ -1,77 +1,128 @@
-﻿using Caty.ContextMaster.Services;
 using Hangfire;
+using Hangfire.Console;
 using Hangfire.Dashboard.BasicAuthorization;
+using Hangfire.HttpJob;
+using Hangfire.SqlServer;
+using Hangfire.Tags.SqlServer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
+using System.Collections.Generic;
+using TimeZoneConverter;
 
 namespace Caty.ContextMaster.Common
 {
     public static class HangFireConfigurationModule
     {
-        public static IServiceCollection AddHangFireModule(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddHangFireModule(this IServiceCollection service, IConfiguration configuration)
         {
-            services.AddHangfire(x =>
-            {
-                x.UseSqlServerStorage(configuration["Hangfire:StorageConnectionStr"]);
-            });
-            return services;
-        }
-
-        /// <summary>
-        /// 配置启动
-        /// </summary>
-        /// <returns></returns>
-        public static BackgroundJobServerOptions JobOptions(IConfiguration configuration)
-        {
-            var queueName = configuration.GetSection("Hangfire:JobOptionSetting:Queues")?.GetChildren()?.ToArray().Select(c => c.Value).ToArray();
-            return new BackgroundJobServerOptions
-            {
-                Queues = queueName,//队列名称，只能为小写
-                WorkerCount = Environment.ProcessorCount * Convert.ToInt32(value: configuration["Hangfire:JobOptionSetting:WorkerCount"]), //并发任务
-                ServerName = configuration["Hangfire:JobOptionSetting:ServerName"], //代表服务名称
-            };
-        }
-
-        /// <summary>
-        /// 配置可视化账号
-        /// </summary>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
-        public static DashboardOptions HfDispose(IConfiguration configuration)
-        {
-            var filter = new BasicAuthAuthorizationFilter(new BasicAuthAuthorizationFilterOptions
-            {
-                SslRedirect = false,
-                RequireSsl = false,
-                LoginCaseSensitive = false,
-                Users = new[] {
-                    new BasicAuthAuthorizationUser
+            service.AddHangfire(x => x.UseSqlServerStorage(
+                    configuration.GetSection("HangfireSqlserverConnectionString").Get<string>(),
+                    new SqlServerStorageOptions()
                     {
-                        Login = configuration["Hangfire:DashboardOptionsSetting:HangfireLoginName"], //可视化的登陆账号
-                        PasswordClear = configuration["Hangfire:DashboardOptionsSetting:HangfireLoginPassword"] //可视化的密码
-                    }
-                }
-            });
-
-            return new DashboardOptions
-            {
-                Authorization = new[] { filter }
-            };
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                        QueuePollInterval = TimeSpan.Zero,
+                        UseRecommendedIsolationLevel = true,
+                        UsePageLocksOnDequeue = true,
+                        DisableGlobalLocks = true
+                    })
+                .UseTagsWithSql()
+                .UseConsole(new ConsoleOptions()
+                {
+                    BackgroundColor = "#000079"
+                })
+                .UseHangfireHttpJob(new HangfireHttpJobOptions
+                {
+                    MailOption = new MailOption
+                    {
+                        Server = configuration.GetSection("HangfireMail:Server").Get<string>(),
+                        Port = configuration.GetSection("HangfireMail:Port").Get<int>(),
+                        UseSsl = configuration.GetSection("HangfireMail:UseSsl").Get<bool>(),
+                        User = configuration.GetSection("HangfireMail:User").Get<string>(),
+                        Password = configuration.GetSection("HangfireMail:Password").Get<string>()
+                    },
+                    DefaultRecurringQueueName = configuration.GetSection("DefaultRecurringQueueName").Get<string>(),
+                    DefaultBackGroundJobQueueName = "DEFAULT",
+                    RecurringJobTimeZone = TZConvert.GetTimeZoneInfo("Asia/Shanghai")
+                }));
+            return service;
         }
 
-        /// <summary>
-        /// 配置定时任务
-        /// </summary>
-        public static void HangfireService()
+        public static IApplicationBuilder AddHangFireServer(this IApplicationBuilder app, IConfiguration configuration)
         {
-            #region 更新Rss
+            #region 强制显示中文
 
-            // 每天的凌晨0:00分执行一次---支持异步方法
-            RecurringJob.AddOrUpdate<RssMaillService>(s => s.GetRssFeedListAsync(), "0 0 8,20 * * ?", TimeZoneInfo.Local);
+            var options = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("zh")
+            };
 
-            #endregion 更新Rss
+            app.UseRequestLocalization(options);
+
+            //强制显示中文
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("zh");
+
+            #endregion 强制显示中文
+
+            var queues = configuration.GetSection("HangfireQueues").Get<List<string>>().ToArray();
+            app.UseHangfireServer(new BackgroundJobServerOptions
+            {
+                ServerTimeout = TimeSpan.FromMinutes(4),
+                SchedulePollingInterval = TimeSpan.FromSeconds(15), //秒级任务需要配置短点，一般任务可以配置默认时间，默认15秒
+                ShutdownTimeout = TimeSpan.FromMinutes(30), //超时时间
+                Queues = queues, //队列
+                WorkerCount = Math.Max(Environment.ProcessorCount, 40) //工作线程数，当前允许的最大线程，默认20
+            });
+
+            var hangfireStartUpPath = configuration.GetSection("HangfireStartUpPath").Get<string>();
+            if (string.IsNullOrWhiteSpace(hangfireStartUpPath)) hangfireStartUpPath = "/job";
+
+            var dashboardConfig = new DashboardOptions
+            {
+                AppPath = "#",
+                DisplayStorageConnectionString = false,
+                IsReadOnlyFunc = context => false
+            };
+            var dashboardUserName = configuration.GetSection("HangfireUserName").Get<string>();
+            var dashboardPwd = configuration.GetSection("HangfirePwd").Get<string>();
+            if (!string.IsNullOrEmpty(dashboardPwd) && !string.IsNullOrEmpty(dashboardUserName))
+            {
+                dashboardConfig.Authorization = new[]
+                {
+                    new BasicAuthAuthorizationFilter(new BasicAuthAuthorizationFilterOptions
+                    {
+                        RequireSsl = false,
+                        SslRedirect = false,
+                        LoginCaseSensitive = true,
+                        Users = new[]
+                        {
+                            new BasicAuthAuthorizationUser
+                            {
+                                Login = dashboardUserName,
+                                PasswordClear = dashboardPwd
+                            }
+                        }
+                    })
+                };
+            }
+            app.UseHangfireDashboard(hangfireStartUpPath, dashboardConfig);
+
+            var hangfireReadOnlyPath = configuration.GetSection("HangfireReadOnlyPath").Get<string>();
+            if (!string.IsNullOrWhiteSpace(hangfireReadOnlyPath))
+            {
+                //只读面板，只能读取不能操作
+                app.UseHangfireDashboard(hangfireReadOnlyPath, new DashboardOptions
+                {
+                    IgnoreAntiforgeryToken = true,
+                    AppPath = hangfireStartUpPath, //返回时跳转的地址
+                    DisplayStorageConnectionString = false, //是否显示数据库连接信息
+                    IsReadOnlyFunc = context => true
+                });
+            }
+            return app;
         }
     }
 }

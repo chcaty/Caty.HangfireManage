@@ -1,7 +1,6 @@
 using Caty.ContextMaster.Common;
 using Caty.ContextMaster.Common.Mail;
 using Caty.ContextMaster.Models;
-using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +28,6 @@ namespace Caty.ContextMaster
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My Api", Version = "1.0" });
             });
             services.AddControllers();
-            services.AddHangfire(x => x.UseSqlServerStorage("ConnectionStrings"));
             services.AddHangFireModule(Configuration);
 
             #region MailKit
@@ -59,9 +57,7 @@ namespace Caty.ContextMaster
 
             #region Hangfire
 
-            app.UseHangfireServer(HangFireConfigurationModule.JobOptions(Configuration));
-            app.UseHangfireDashboard("/TaskManager", HangFireConfigurationModule.HfDispose(Configuration));
-            HangFireConfigurationModule.HangfireService();
+            app.AddHangFireServer(Configuration);
 
             #endregion Hangfire
 
